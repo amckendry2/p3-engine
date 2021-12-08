@@ -1,0 +1,81 @@
+#include "game.h"
+#include <math.h>
+
+float x = 64;
+float y = 64;
+float xVel = 0;
+float yVel = 0;
+float speed = .2;
+double angle = 0;
+bool thrust = false;
+int t = 0;
+
+Color red {255, 0, 0};
+Color green{0, 255, 0};
+Color blue{0, 0, 255};
+Color purple{255, 0, 255};
+Color brown{255, 255, 0};
+
+void _init(P3& p3){
+    p3.loadSpriteDirectory("./sprites");
+    p3.loadSFXDirectory("./sfx");
+    p3.loadMusicDirectory("./music");
+    p3.loadSpriteMapDirectory("./maps");
+    p3.loadSpriteIndex("./maps");
+    p3.setPalette({
+	    {255, 0, 0},
+	    green,
+	    blue,
+	    purple,
+	    brown
+	});
+}
+
+void _update(P3& p3, double fdt){
+    t++;
+    thrust = false;
+    if(p3.buttonDown("Up")){
+	xVel+=sin(angle * M_PI / 180) * .05;
+	yVel-=cos(angle * M_PI / 180) * .05;
+	thrust = true;
+    }
+    if(p3.buttonDown("Down")){
+	xVel-=sin(angle * M_PI / 180) * .05;
+	yVel+=cos(angle * M_PI / 180) * .05;
+	thrust = true;
+    }
+    if(p3.buttonDown("Left")){
+        angle -= 3;
+    }
+    if(p3.buttonDown("Right")){
+	angle += 3;
+    }
+    x+=xVel;
+    y+=yVel;
+    int sw = p3.getCanvasWidth();
+    int sh = p3.getCanvasHeight();
+    if(clamp((int)x, 0, sw-8) != (int)x){
+	x-=xVel;
+	xVel *= -.5;
+	p3.playSFX("boing", -1, (x/(sw-8))*2 - 1,(1-(y/(sh-8))) / 2);
+    }
+    if(clamp((int)y, 0, sh-8) != (int)y){
+	y-=yVel;
+	yVel *= -.5;
+	p3.playSFX("boing", -1, (x/(sw-8))*2 - 1, (1-(y/(sh-8))) / 2);
+    }
+}
+
+void _draw(P3& p3, double){
+    Color black{0,0,0};
+    p3.clearScreen(black);
+    p3.circleFill(64, 64, 60, 2);
+    p3.circle(64, 64, 20, 1);
+    p3.line(64, 64, 10, 10, 3);
+    p3.rectFill(80, 60, 20, 10, 4);
+    p3.rect(80, 60, 20, 10, 0);
+    
+    double rads = angle * (M_PI / 180);
+    int sprite = thrust ? (t / 5) % 4 : 0;
+    p3.drawRotatedSprite("pixelguysheet", sprite,  x, y, rads, false);
+}

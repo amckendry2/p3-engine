@@ -1,0 +1,31 @@
+#include "frame_ring_buffer.h"
+#include <vector>
+#include <cstdint>
+using namespace std;
+
+FrameRingBuffer::FrameRingBuffer(size_t sz)
+    : size{sz},
+      first{0},
+      last{0},
+      buffer{sz}
+{}
+
+bool FrameRingBuffer::isFull(){
+    return size == buffer.size();
+}
+
+void FrameRingBuffer::push(int64_t val){
+    buffer[last] = val;
+    last = (last + 1) % buffer.size();
+    if(isFull())
+	first = (first + 1) % buffer.size();
+    else size++;
+}
+
+int64_t FrameRingBuffer::average(){
+    int64_t total = 0;
+    for(size_t i = 0; i < size; i++){
+	total += buffer[i];
+    }
+    return total / size;
+}

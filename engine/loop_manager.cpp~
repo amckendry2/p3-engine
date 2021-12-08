@@ -1,0 +1,58 @@
+#include "app_state.h"
+#include "loop_manager.h"
+#include "main_loop.h"
+#include <SDL2/SDL.h>
+#include <iostream>
+
+
+LoopManager::LoopManager(MainLoop& _mainLoop)
+    : mainLoop{_mainLoop},
+      running{false},
+      framerate{60}
+{}
+
+void LoopManager::startLoop(){
+
+    if(running)
+	return;
+    running = true;
+    
+    int64_t ticks_60hz = SDL_GetPerformanceFrequency() / 60;
+    // int64_t snapVals[]{ticks_60hz, ticks_60hz * 2, ticks_60hz * 3, ticks_60hz * 4, ticks}
+    
+    double updateRate = framerate;
+    double fixedDeltaTime = 1.0 / updateRate;
+    int64_t targetFrameTime = SDL_GetPerformanceFrequency() / updateRate;
+    int64_t maxDeviation = SDL_GetPerformanceFrequency() * .0002;
+    
+    int64_t accumulator = 0;
+    int64_t prevFrameTime = SDL_GetPerformanceCounter();
+
+    int frameCount = 0;
+
+    while(!AppState::didQuit()){
+
+	int64_t currentFrameTime = SDL_GetPerformanceCounter();
+	int64_t deltaTime = currentFrameTime - prevFrameTime;
+	prevFrameTime = currentFrameTime;
+
+	if(abs(deltaTime - ticks_60hz) < maxDeviation){
+	    deltaTime = ticks_60hz;
+	}
+
+	accumulator += deltaTime;
+
+        mainLoop.eventFunc();
+
+	while(accumulator >= targetFrameTime){
+	    frameCount++;
+	    mainLoop.updateFunc(fixedDeltaTime);
+	    accumulator -= targetFrameTime;
+	}
+	mainLoop.renderFunc();
+    }
+    running = false;
+    mainLoop.closeFunc();
+    return;
+
+}

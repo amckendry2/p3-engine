@@ -1,0 +1,45 @@
+#include "loop_manager.h"
+#include <SDL2/SDL.h>
+
+LoopManager::LoopManager(){
+}
+
+void LoopManager::startLoop(Game& game){
+    int64_t ticks_60hz = SDL_GetPerformanceFrequency() / 60;
+    // int64_t snapVals[]{ticks_60hz, ticks_60hz * 2, ticks_60hz * 3, ticks_60hz * 4, ticks}
+    
+    double updateRate = game.up
+    double fixedDeltaTime = 1.0 / updateRate;
+    int64_t targetFrameTime = SDL_GetPerformanceFrequency() / updateRate;
+    int64_t maxDeviation = SDL_GetPerformanceFrequency() * .0002;
+    
+    int64_t accumulator = 0;
+    int64_t prevFrameTime = SDL_GetPerformanceCounter();
+
+    int frameCount = 0;
+
+    bool doQuit = false;
+    while(!doQuit){
+
+	int64_t currentFrameTime = SDL_GetPerformanceCounter();
+	int64_t deltaTime = currentFrameTime - prevFrameTime;
+	prevFrameTime = currentFrameTime;
+
+	if(abs(deltaTime - ticks_60hz) < maxDeviation){
+	    deltaTime = ticks_60hz;
+	}
+
+	accumulator += deltaTime;
+
+	inputHandler.updateInputState();
+
+	while(accumulator >= targetFrameTime){
+	    frameCount++;
+	    update(this, fixedDeltaTime);
+	    accumulator -= targetFrameTime;
+	}	
+    }
+    quit(this);
+    return;
+
+}

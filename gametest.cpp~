@@ -1,0 +1,20 @@
+#include "P3.h"
+#include <SDL2/SDL.h>
+#include <iostream>
+
+
+void update(P3* p3, double delta){
+    // cout << "updating" << endl;
+}
+
+void quit(P3* p3){
+    // cout << "quitting" << endl;
+    p3->close();
+}
+
+int main(int argc, char* args[]){
+    P3 p3(128, 128, 1024, 1024);
+    p3.loadSprites("./sprites");
+    p3.startLoop(update, quit);
+    return 0;
+}

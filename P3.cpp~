@@ -1,0 +1,136 @@
+#include "sprite.h"
+#include "pixel_canvas.h"
+#include "P3.h"
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_image.h>
+#include <SDL2/SDL_ttf.h>
+#include <SDL2/SDL_mixer.h>
+#include <stdio.h>
+#include <iostream>
+#include <map>
+#include <string>
+#include <vector>
+#include <math.h>
+#include <algorithm>
+
+P3::P3(int pw, int ph, int sw, int sh) : pixelWidth{pw}, pixelHeight{ph}, screenWidth{sw}, screenHeight{sh}
+{
+    if(SDL_Init(SDL_INIT_VIDEO) < 0){
+	printf("SDL could not initialize. Error: %s\n", SDL_GetError());
+    }
+    
+    if(!(appWindow = SDL_CreateWindow("P3", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, screenWidth, screenHeight, SDL_WINDOW_SHOWN))){
+	printf("SDL could not create window. Error: %s\n", SDL_GetError());
+    }
+    
+    if(!(appRenderer = SDL_CreateRenderer(appWindow, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC))){
+	printf("SDL could not create Renderer. Error: %s\n");
+    }
+    
+    if(!IMG_Init(IMG_INIT_PNG) & IMG_INIT_PNG){
+	printf("SDL could not initialize image processing. Error: %s\n", IMG_GetError());
+    }
+    
+    pixelCanvas.init(appRenderer, appWindow, pixelWidth, pixelHeight);
+}
+
+P3::~P3(){
+    close();
+}
+
+void P3::close(){
+    SDL_DestroyRenderer(appRenderer);
+    SDL_DestroyWindow(appWindow);
+    appRenderer = NULL;
+    appWindow = NULL;
+    SDL_Quit();
+}
+
+void P3::loadSprites(string path){
+    pixelCanvas.loadSpriteLibrary(path);
+}
+
+void P3::setTransparentColor(SDL_Color color){
+    pixelCanvas.setTransparentColor(color);
+}
+
+void P3::setTransparentColor(int r, int g, int b, int a){
+    SDL_Color color { r, g, b, a};
+    pixelCanvas.setTransparentColor(color);
+}
+
+void P3::clearScreen(SDL_Color color){
+    pixelCanvas.clear(color);
+}
+
+void P3::clearScreen(int r, int g, int b, int a){
+    SDL_Color color{r, g, b, a};
+    pixelCanvas.clear(color);
+}
+
+void P3::pset(int x, int y, SDL_Color color){
+    pixelCanvas.pset(x, y, color);
+}
+
+void P3::pset(int x, int y, int r, int g, int b, int a){
+    SDL_Color color{r, g, b, a};
+    pixelCanvas.pset(x, y, color);
+}
+
+void P3::drawSprite(string spriteName, int index, int x, int y){
+    pixelCanvas.spr(spriteName, index, x, y);
+}
+
+void P3::drawSprite(string spriteName, int x, int y){
+    pixelCanvas.spr(spriteName, 0, x, y);
+}
+
+bool P3::getInput(string button){
+    
+}
+
+void P3::startLoop(void(*update)(P3*, double), void(*quit)(P3*)){
+
+    SDL_Event event;
+    
+    int64_t ticks_60hz = SDL_GetPerformanceFrequency() / 60;
+    // int64_t snapVals[]{ticks_60hz, ticks_60hz * 2, ticks_60hz * 3, ticks_60hz * 4, ticks}
+    
+    double updateRate = 60;
+    
+    double fixedDeltaTime = 1.0 / updateRate;
+    int64_t targetFrameTime = SDL_GetPerformanceFrequency() / updateRate;
+    int64_t maxDeviation = SDL_GetPerformanceFrequency() * .0002;
+    
+    int64_t accumulator = 0;
+    int64_t prevFrameTime = SDL_GetPerformanceCounter();
+
+    int frameCount = 0;
+
+    bool doQuit = false;
+    while(!doQuit){
+
+	int64_t currentFrameTime = SDL_GetPerformanceCounter();
+	int64_t deltaTime = currentFrameTime - prevFrameTime;
+	prevFrameTime = currentFrameTime;
+
+	if(abs(deltaTime - ticks_60hz) < maxDeviation){
+	    deltaTime = ticks_60hz;
+	}
+
+	accumulator += deltaTime;
+
+	inputHandler.updateInputState();
+
+	while(accumulator >= targetFrameTime){
+	    frameCount++;
+	    update(this, fixedDeltaTime);
+	    accumulator -= targetFrameTime;
+	}	
+    }
+    quit(this);
+    return;
+}
+
+
+    

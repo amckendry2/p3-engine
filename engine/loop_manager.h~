@@ -1,0 +1,20 @@
+#ifndef LOOP_MANAGER_H
+#define LOOP_MANAGER_H
+
+#include "main_loop.h"
+
+class LoopManager{
+public:
+    LoopManager(MainLoop&);
+    void startLoop();
+private:
+    double framerate;
+    bool running;
+    MainLoop& mainLoop;
+};
+
+#endif
+    
+// Local Variables:
+// mode: c++
+// End:

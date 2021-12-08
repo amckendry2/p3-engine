@@ -1,0 +1,25 @@
+#ifndef FRAME_RING_BUFFER_H
+#define FRAME_RING_BUFFER_H
+
+#include <vector>
+#include <cstdint>
+using namespace std;
+
+class FrameRingBuffer{
+public:
+    FrameRingBuffer(size_t);
+    void push(int64_t);
+    bool isFull();
+    int64_t average();
+private:
+    vector<int64_t> buffer;
+    size_t first;
+    size_t last;
+    size_t size;
+};
+
+#endif
+
+// Local Variables:
+// mode: c++
+// End:

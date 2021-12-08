@@ -1,0 +1,42 @@
+#ifndef P3_H
+#define P3_H
+
+#include "pixel_canvas.h"
+#include "input_handler.h"
+#include <SDL2/SDL.h>
+#include <string>
+
+class P3 {
+public:
+    P3(int pw, int ph, int sw, int sh);
+    ~P3();
+    void close();
+    void loadSprites(string path);
+    void setTransparentColor(SDL_Color color);
+    void setTransparentColor(int r, int g, int b, int a = 255);
+    void clearScreen(SDL_Color color);
+    void clearScreen(int r, int g, int b, int a = 255);
+    void pset(int x, int y, SDL_Color color);
+    void pset(int x, int y, int r, int g, int b, int a = 255);
+    void drawSprite(string spriteName, int index, int x, int y);
+    void drawSprite(string spriteName, int x, int y);
+    bool getInput(string button);
+    void startLoop(void(*update)(P3*, double), void(*quit)(P3*));
+    
+private:
+    int screenWidth;
+    int screenHeight;
+    int pixelWidth;
+    int pixelHeight;
+    int frameTiming;
+    SDL_Window* appWindow;
+    SDL_Renderer* appRenderer;
+    PixelCanvas pixelCanvas;
+    InputHandler inputHandler;
+};
+
+#endif
+
+// Local Variables:
+// mode: c++
+// End:

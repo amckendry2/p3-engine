@@ -1,0 +1,13 @@
+#ifndef RESOURCE_LIBRARY_H
+#define RESOURCE_LIBRARY_H
+
+template<typename T>
+class ResourceLibrary{
+    
+}
+
+#endif
+
+// Local Variables:
+// mode: c++
+// End:

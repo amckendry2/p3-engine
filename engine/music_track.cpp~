@@ -1,0 +1,13 @@
+#include "music_track.h"
+
+MusicTrack::MusicTrack() : music{nullptr}{};
+
+MusicTrack::~MusicTrack(){
+    if(music != nullptr)
+	SDL_FreeMusic(music);
+}
+
+bool MusicTrack::loadFromPath(string filePath){
+    music = Mix_LoadMUS(filePath);
+    return music != NULL;
+}

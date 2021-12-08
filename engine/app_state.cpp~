@@ -1,0 +1,7 @@
+#include "app_state.h"
+
+void AppState::quitApp(){quit = true;}
+
+bool AppState::didQuit(){return quit;}
+
+bool AppState::quit = false;

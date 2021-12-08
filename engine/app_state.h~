@@ -1,0 +1,13 @@
+#ifndef APP_STATE_H
+#define APP_STATE_H
+
+class AppState{
+public:
+    static void quitApp();
+    static bool didQuit();
+private:
+    static bool quit;
+};
+
+#endif
+

@@ -1,0 +1,3 @@
+#include "P3.h"
+void update(P3& p3, double);
+void draw(P3& p3, double);

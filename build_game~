@@ -1,0 +1,1 @@
+make game GAME=$1 BUILD=$2

@@ -1,0 +1,21 @@
+#include "P3.h"
+#include "engine.h"
+#include "event_handler.h"
+#include "loop_timer.h"
+#include "main_loop.h"
+#include <SDL2/SDL.h>
+
+int main(int argc, char* args[]){
+    // Engine engine;                                                     //SDL container
+    // PixelCanvas pixelCanvas{engine.getRenderer(), engine.getWindow()}; //pixel rendering
+    // pixelCanvas.loadSpriteLibrary("./sprites");
+    // EventHandler eventHandler;                                         //input/events
+    // P3 p3 {pixelCanvas, eventHandler};                                 //API for game scripting
+    // MainLoop mainLoop{p3, engine, eventHandler, pixelCanvas};          //loop callback procedures/script hook
+    // LoopTimer loopTimer{mainLoop};                                 //game loop timing
+    // loopTimer.startLoop();                                           //run engine
+    MainLoop mainLoop;
+    mainLoop.run();
+    return 0;
+}
+
