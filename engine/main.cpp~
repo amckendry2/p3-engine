@@ -1,8 +1,0 @@
-#include "main_loop.h"
-
-int main(int argc, char* args[]){
-    MainLoop mainLoop;
-    mainLoop.run();
-    return 0;
-}
-

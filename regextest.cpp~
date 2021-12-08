@@ -1,7 +1,0 @@
-#include <regex>
-#include <string>
-
-int main(){
-    regex pat {R"(n=([\w+])\si=([\n+])\sid=([\n+]))"};
-    string 
-}

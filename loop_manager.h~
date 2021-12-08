@@ -1,6 +1,0 @@
-#ifndef LOOP_MANAGER_H
-#define LOOP_MANAGER_H
-
-struct LoopManager{
-    void startLoop(Game& game);
-#endif

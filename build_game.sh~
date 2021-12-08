@@ -1,6 +1,0 @@
-if [ -z "$2" ]
-then
-    make game GAME=$1
-else
-    make game GAME=$1 BUILD=_$2
-fi
